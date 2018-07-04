@@ -1,8 +1,14 @@
 <template>
   <div class='home'>
     <div class="header">
-      <span class="span-dayAndTime">{{ dayAndTime }}</span>
-      <font-awesome-icon :icon="icon.calendar" size="1x" class="icon icon-calendar" @click="showCalendar" />
+      <span class="span-date">{{ dayAndTime }}</span>
+
+      <div class="new-tab new-tab-header">
+        <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
+        <p class="add-tab" @click="addTab" v-bind:class="{ iconPlusActive: tabModal }">+</p>
+      </div>
+
+      <!-- <font-awesome-icon :icon="icon.calendar" size="1x" class="icon icon-calendar" @click="showCalendar" /> -->
       <span class="span-user">{{ user }}</span>
       <button @click='signOut'>
         Sign Out
@@ -10,12 +16,12 @@
       </button>
     </div>
 
-    <calendarModal v-show="calendarModal" @close="calendarModal = false" />
+    <!-- <calendarModal v-show="calendarModal" @close="calendarModal = false" /> -->
 
     <div class="todo-tabs">
       <todolist v-for="(tab, index) in tabs" :key="tab.id" :todayDate="todayDate" :nthTab="index" />
 
-      <div class="newTab">
+      <div class="new-tab new-tab-main">
         <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
         <p class="add-tab" @click="addTab" v-bind:class="{ iconPlusActive: tabModal }">+</p>
       </div>
@@ -101,130 +107,49 @@ export default {
 </script>
 
 <style scoped>
-.header {
-  position: absolute;
-  top: 0;
-  right: 0;
-
+.home {
   width: 100%;
-
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+.header {
+  width: 100%;
+  height: 6vmin;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
 }
-.header span {
-  font-size: 22px;
+.span-date {
+  margin-right: auto;
+  margin-left: 1vw;
 }
 .span-user {
-  margin-left: 20px;
+  margin-right: 1vw;
 }
-.span-dayAndTime {
-  margin-right: auto;
-  margin-left: 20px;
+.header span {
+  font-size: 1.15vw;
 }
 .header button {
-  height: 28px;
-  width: 105px;
+  height: 2vw;
+  width: 6vw;
   border-radius: 2px;
   outline: none;
   border: none;
-  margin: 10px;
-  margin-left: 20px;
-  font-size: 16px;
+  font-size: 0.8vw;
   cursor: pointer;
   background: #c8d6e5;
   flex-shrink: 0;
+  margin-right: 1vw;
 }
-button * {
-  margin: 0 5px;
-}
-
-/*Nav-bar*/
-.navbar {
-  border: 1px solid grey;
-  width: 420px;
+.todo-tabs {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
-  overflow: hidden;
-  height: 68px;
-  transform: translateY(-15px);
-  background: #c8d6e5;
-  /*
-  animation: underlineExpand 1s linear forwards;
-  animation-delay: .5s;
-  */
-}
-@media only screen and (max-width: 800px) {
-  .home {
-    width: 100%;
-    height: 100%;
-  }
-  .home * {
-    margin: 0;
-  }
-  .header {
-    flex-flow: row nowrap;
-    width: 100%;
-    justify-content: center;
-  }
-  .todo-tabs {
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-  .add-tab {
-    right: 0;
-  }
-  .header span {
-    font-size: 12px;
-  }
-  .span-user {
-    margin: 0;
-  }
-  .header button {
-    height: 38px;
-    width: 70px;
-    border-radius: 2px;
-    outline: none;
-    border: none;
-    margin: 10px;
-    margin-left: 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background: #c8d6e5;
-    flex-shrink: 0;
-  }
-}
-.icon {
-  cursor: pointer;
-  opacity: 0;
-  animation: fadeInLeft 1s ease-in forwards;
-  margin: 0 10px;
-}
-.icon:nth-child(4) {
-  animation-delay: .5s;
-}
-.icon:nth-child(3) {
-  animation-delay: 1s;
-}
-.icon:nth-child(2) {
-  animation-delay: 1.3s;
-}
-.icon:nth-child(1) {
-  animation-delay: 1.4s;
-}
-@keyframes fadeInLeft {
-  from {
-    transform: translateX(-200px);
-    opacity: 0;
-  } to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  align-items: center;
+  margin: 20px 20px;
 }
 .add-tab {
   font-size: 5em;
@@ -260,18 +185,74 @@ button * {
     transform: rotate(0) ;
   }
 }
-.todo-tabs {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 40px;
-}
-.newTab {
+.new-tab {
   position: relative;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
 }
+.new-tab-header {
+  display: none;
+}
+@media only screen and (max-width: 1450px) {
+  .todo-tabs {
+    transition: all .5s;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .new-tab-main {
+    display: none;
+  }
+  .new-tab-header {
+    display: flex;
+  }
+}
+
+/*
+.navbar {
+  border: 1px solid grey;
+  width: 420px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  overflow: hidden;
+  height: 68px;
+  transform: translateY(-15px);
+  background: #c8d6e5;
+
+  animation: underlineExpand 1s linear forwards;
+  animation-delay: .5s;
+}
+.icon {
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeInLeft 1s ease-in forwards;
+  margin: 0 10px;
+}
+.icon:nth-child(4) {
+  animation-delay: .5s;
+}
+.icon:nth-child(3) {
+  animation-delay: 1s;
+}
+.icon:nth-child(2) {
+  animation-delay: 1.3s;
+}
+.icon:nth-child(1) {
+  animation-delay: 1.4s;
+}
+@keyframes fadeInLeft {
+  from {
+    transform: translateX(-200px);
+    opacity: 0;
+  } to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+*/
 </style>

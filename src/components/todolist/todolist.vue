@@ -102,15 +102,18 @@ export default {
 
 <style scoped>
 .todolist {
+  transition: all .5s;
   position: relative;
-  width: 420px;
-  height: 400px;
-  border-radius: 2px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
+
+  width: 37vmin;
+  height: 37vmin;
+  min-width: 220px;
+  min-height: 200px;
+  border-radius: 2px;
   margin: 10px;
-  margin-right: 50px;
   -webkit-box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.25);
   -moz-box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.25);
   box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.25);
@@ -127,7 +130,7 @@ export default {
   margin: 0;
   font-size: 28px;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1450px) {
   .header {
     flex-flow: row nowrap;
     width: 100%;
@@ -136,6 +139,8 @@ export default {
   .todolist {
     max-width: 100%;
     margin: 0;
+    width: 100vw;
+    height: 37vmin;
   }
 }
 ul {
