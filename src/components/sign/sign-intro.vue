@@ -24,7 +24,7 @@ export default {
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
-  width: 400px;
+  width: 380px;
   height: 500px;
   padding: 10px;
 }
@@ -35,7 +35,7 @@ h1 {
 .intro-footer {
   font-weight: bold;
   font-size: 3em;
-  margin-top: 60px;
+  margin-top: 30px;
   opacity: 0;
   background: rgba(220, 221, 225,1.0);
   outline: 10px solid rgba(220, 221, 225,1.0);

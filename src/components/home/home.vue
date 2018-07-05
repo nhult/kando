@@ -6,6 +6,7 @@
       <div class="new-tab new-tab-header">
         <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
         <p class="add-tab" @click="addTab" v-bind:class="{ iconPlusActive: tabModal }">+</p>
+        <span>ADD TAB</span>
       </div>
 
       <!-- <font-awesome-icon :icon="icon.calendar" size="1x" class="icon icon-calendar" @click="showCalendar" /> -->
@@ -19,7 +20,7 @@
     <!-- <calendarModal v-show="calendarModal" @close="calendarModal = false" /> -->
 
     <div class="todo-tabs">
-      <todolist v-for="(tab, index) in tabs" :key="tab.id" :todayDate="todayDate" :nthTab="index" />
+      <todolist v-for="(tab, index) in tabs" :key="index" :todayDate="todayDate" :title="tab.title" />
 
       <div class="new-tab new-tab-main">
         <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
@@ -88,18 +89,14 @@ export default {
     removeTab: function() {
     },
     updateTabs: function() {
-      const tabsClone = [];
-
-      let i = 0;
-      for (i; i < 3; i++) {
-        tabsClone.push([]);
-        db.collection('users').doc(this.user).collection('default').doc('tabs').collection('tab' + i).get()
-        .then(documents => {
-          documents.forEach(doc => {
-            tabsClone[i].push(doc.data());
-          });
+      let tabsClone = [];
+      let collectionRef = db.collection('users').doc(this.user).collection('tabs');
+      collectionRef.get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          tabsClone.push(doc.data());
         });
-      }
+      });
+
       this.tabs = tabsClone;
     },
   }
@@ -119,7 +116,7 @@ export default {
   height: 6vmin;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 }
 .span-date {
@@ -130,18 +127,17 @@ export default {
   margin-right: 1vw;
 }
 .header span {
-  font-size: 1.15vw;
+  font-size: 1.5em;
 }
 .header button {
-  height: 2vw;
-  width: 6vw;
+  height: 2.2em;
+  width: 8em;
   border-radius: 2px;
   outline: none;
   border: none;
-  font-size: 0.8vw;
+  font-size: 0.9em;
   cursor: pointer;
   background: #c8d6e5;
-  flex-shrink: 0;
   margin-right: 1vw;
 }
 .todo-tabs {
@@ -192,23 +188,41 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.new-tab p {
+  margin-right: 20px;
+}
+.new-tab span {
+  font-size: 2vw;
+}
 .new-tab-header {
   display: none;
 }
 @media only screen and (max-width: 1450px) {
   .todo-tabs {
-    transition: all .5s;
-    display: flex;
-    flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    margin: 20px 0;
   }
   .new-tab-main {
     display: none;
   }
-  .new-tab-header {
+  .header .new-tab-header {
     display: flex;
+    height: 100%;
+
+    margin: 0 auto;
+    transform: translateX(-9.3vw);
+  }
+}
+@media only screen and (max-width: 680px) {
+  .header {
+    justify-content: flex-end;
+  }
+  .new-tab-header {
+    margin: 0;
+    transform: translateX(0);
+  }
+  .icon-signOut, .span-date, .span-user {
+    display: none;
   }
 }
 

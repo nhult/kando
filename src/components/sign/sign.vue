@@ -25,6 +25,7 @@ export default {
   flex-flow: row nowrap;
   justify-content: space-between;
   width: 830px;
+  margin-top: 40px;
 }
 @media only screen and (max-width: 800px) {
   .sign {
@@ -33,6 +34,7 @@ export default {
     align-items: center;
     width: 90%;
     height: 100%;
+    margin-top: 0;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class='todolist'>
     <div class='todolist-header'>
-      <input type="text" maxlength="27" v-bind:placeholder="'tab' + this.nthTab" @keyup.enter='addTodo' v-model='value' />
+      <input type="text" maxlength="27" v-bind:placeholder="title" @keyup.enter='addTodo' v-model='value' />
     </div>
     <ul>
       <li v-for="(todo, index) in todos" v-if="!todo.completed" :key="todo.id" :index="index" @click="selectTodo($event, todo.id)">
@@ -25,17 +25,16 @@ import db from '../../main'
 
 export default {
   name: 'todolist',
-  props: ['todayDate', 'nthTab'],
+  props: ['todayDate', 'nthTab', 'title'],
   data: function() {
     return {
-      title: this.todayDate, /*if no selectedDate present, pick the present day. Which will happen on page refresh.*/
       todos: [],
       value: '',
       userEmail: firebase.auth().currentUser.email
     }
   },
   created: function() {
-    db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab)
+    db.collection('users').doc(this.userEmail).collection('tabs')
     .onSnapshot(snapshot => {
       this.todos = [];
       snapshot.forEach(doc => {
@@ -52,16 +51,24 @@ export default {
   methods: {
     addTodo: function () {
       if(this.value === '') {
-        alert("Todo is an empty string")
+        alert("Todo can't be empty")
         return false;
       }
 
-      const ref = db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab).doc();
-      ref.set({
-        value: this.value,
-        id: ref.id,
-        completed: false
+      this.todos.unshift(this.value);
+      let docRef = db.collection('users').doc(this.user).collection('tabs').doc(this.title);
+      return docRef.update({
+        todos: this.todos
+      })
+      .then(function() {
+        console.log("Document successfully updated!");
+      })
+      .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
       });
+
+
       this.value = '';
     },
     updateTodos: function() {
@@ -129,19 +136,6 @@ export default {
   color: grey;
   margin: 0;
   font-size: 28px;
-}
-@media only screen and (max-width: 1450px) {
-  .header {
-    flex-flow: row nowrap;
-    width: 100%;
-    justify-content: center;
-  }
-  .todolist {
-    max-width: 100%;
-    margin: 0;
-    width: 100vw;
-    height: 37vmin;
-  }
 }
 ul {
   width: 100%;
@@ -211,5 +205,22 @@ input[type="text"]:focus {
 }
 label {
   cursor: pointer;
+}
+@media only screen and (max-width: 1450px) {
+  .todolist {
+  }
+}
+@media only screen and (max-width: 1000px) {
+  .header {
+    flex-flow: row nowrap;
+    width: 100%;
+    justify-content: center;
+  }
+  .todolist {
+    max-width: 100%;
+    margin: 0;
+    width: 100vw;
+    height: 37vmin;
+  }
 }
 </style>

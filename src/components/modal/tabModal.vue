@@ -3,7 +3,7 @@
     <div class='content'>
       <div class='vertical-line'>
       </div>
-      <input type="text" placeholder="Name (e.g. groceries)" @keyup.enter='addTab'>
+      <input type="text" v-model="value" placeholder="Title (e.g. groceries)" @keyup.enter='addTab'>
     </div>
   </div>
 </template>
@@ -18,10 +18,21 @@ export default {
   props: ['userEmail', 'todayDate'],
   data() {
     return {
+      value: ''
     }
   },
   methods: {
     addTab: function () {
+      db.collection('users').doc(this.userEmail).collection('tabs').doc(this.value).set({
+        title: this.value,
+        todos: []
+      })
+      .then(function() {
+        console.log("Document successfully written!");
+      })
+      .catch(function(error) {
+        console.error("Error writing document: ", error);
+      });
     }
   }
 }
