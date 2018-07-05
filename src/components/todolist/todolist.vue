@@ -4,12 +4,12 @@
       <input type="text" maxlength="27" v-bind:placeholder="title" @keyup.enter='addTodo' v-model='value' />
     </div>
     <ul>
-      <li v-for="(todo, index) in todos" v-if="!todo.completed" :key="todo.id" :index="index" @click="selectTodo($event, todo.id)">
+      <li v-for="(todo, index) in todos" v-if="!todo.completed" :key="index" :index="index" @click="selectTodo($event, index)">
         <input type="checkbox" v-bind:checked="todo.completed" class="checkbox-selectTodo" name="selectTodo" />
         <label for="selectTodo">{{ todo.value }}</label>
       </li>
 
-      <li v-else :key="todo.id" :index="index" @click="selectTodo($event, todo.id)">
+      <li v-else :key="index" :index="index" @click="selectTodo($event, index)">
         <input type="checkbox" v-bind:checked="todo.completed" class="checkbox-selectTodo" name="selectTodo" />
         <label for="selectTodo">{{ todo.value }}</label>
       </li>
@@ -34,19 +34,15 @@ export default {
     }
   },
   created: function() {
-    db.collection('users').doc(this.userEmail).collection('tabs')
-    .onSnapshot(snapshot => {
-      this.todos = [];
-      snapshot.forEach(doc => {
-        !doc.data().completed == true ?
-        this.todos.unshift(doc.data()) :
-        this.todos.push(doc.data());
-      });
-    }, function(error) {
-      alert("Couldn't fetch todos :/")
+    db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title).get()
+    .then(doc => {
+      this.todos = doc.data().todos.map(item => {
+        return {completed: item.completed, value: item.value}
+      })
+    })
+    .catch(function(error) {
+      console.log("Error getting document:", error);
     });
-
-    this.updateTodos();
   },
   methods: {
     addTodo: function () {
@@ -55,53 +51,32 @@ export default {
         return false;
       }
 
-      this.todos.unshift(this.value);
-      let docRef = db.collection('users').doc(this.user).collection('tabs').doc(this.title);
-      return docRef.update({
-        todos: this.todos
-      })
-      .then(function() {
-        console.log("Document successfully updated!");
-      })
-      .catch(function(error) {
-        // The document probably doesn't exist.
-        console.error("Error updating document: ", error);
-      });
+      let newTodo = {value: this.value, completed: false}
+      this.todos.unshift(newTodo);
+
+      let docRef = db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
+      .set({title: this.title, todos: this.todos});
 
 
       this.value = '';
     },
     updateTodos: function() {
-      let todosClone = [];
-      db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab).get()
-      .then(snapshot  => {
-        snapshot.forEach(doc => {
-          todosClone.push(doc.data());
-        });
-      });
-
-      this.todos = todosClone;
+      //Push local changes to DB.
+      let docRef = db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
+      .set({title: this.title, todos: this.todos});
     },
-    selectTodo: function (e, id) {
+    selectTodo: function (e, index) {
       e.preventDefault();
-      db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab).doc(id).get()
-      .then(doc => {
-        db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab).doc(id).update({
-          completed: !doc.data().completed
-        });
-      })
+      this.todos[index].completed = !this.todos[index].completed;
+      this.updateTodos();
+      return false;
     },
     clearCompleted: function () {
-      db.collection('users').doc(this.userEmail).collection('default').doc('tabs').collection('tab' + this.nthTab)
-      .where("completed", "==", true).get()
-      .then((querySnapshot) => {
-        let batch = db.batch();
-        querySnapshot.forEach(function(doc) {
-          batch.delete(doc.ref);
-        });
-
-        return batch.commit();
+      let clearedList = this.todos.filter(item => {
+        return !item.completed
       });
+      this.todos = clearedList;
+      this.updateTodos();
     }
   }
 }
