@@ -90,6 +90,7 @@ export default {
   flex-flow: column nowrap;
   justify-content: space-between;
 
+  z-index: 2;
   width: 37vmin;
   height: 37vmin;
   min-width: 220px;
