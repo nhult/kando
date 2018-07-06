@@ -4,7 +4,7 @@
       <span class="span-date">{{ dayAndTime }}</span>
 
       <div class="new-tab new-tab-header">
-        <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
+        <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate" @update="updateTabs">+</tabModal>
         <p class="add-tab" @click="addTab" v-bind:class="{ iconPlusActive: tabModal }">+</p>
         <span>ADD TAB</span>
       </div>
@@ -20,7 +20,7 @@
     <!-- <calendarModal v-show="calendarModal" @close="calendarModal = false" /> -->
 
     <div class="todo-tabs">
-      <todolist v-for="(tab, index) in tabs" :key="index" :todayDate="todayDate" :title="tab.title" />
+      <todolist v-for="(tab, index) in tabs" :key="index" :title="tab.title" @update="updateTabs" />
 
       <div class="new-tab new-tab-main">
         <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate">+</tabModal>
@@ -86,8 +86,6 @@ export default {
     addTab: function() {
       this.tabModal == false ? this.tabModal = true : this.tabModal = false;
     },
-    removeTab: function() {
-    },
     updateTabs: function() {
       let tabsClone = [];
       let collectionRef = db.collection('users').doc(this.user).collection('tabs');
@@ -96,7 +94,6 @@ export default {
           tabsClone.push(doc.data());
         });
       });
-
       this.tabs = tabsClone;
     },
   }

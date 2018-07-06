@@ -14,7 +14,10 @@
         <label for="selectTodo">{{ todo.value }}</label>
       </li>
     </ul>
-    <span class="todos-clearCompleted" @click="clearCompleted">CLEAR COMPLETED</span>
+    <div class="todolist-footer">
+      <span class="todos-clearCompleted" @click="clearCompleted">CLEAR COMPLETED</span>
+      <span class="tab-removeTab" @click="removeTab">REMOVE TAB</span>
+    </div>
   </div>
 </template>
 
@@ -25,7 +28,7 @@ import db from '../../main'
 
 export default {
   name: 'todolist',
-  props: ['todayDate', 'nthTab', 'title'],
+  props: ['title'],
   data: function() {
     return {
       todos: [],
@@ -50,33 +53,41 @@ export default {
         alert("Todo can't be empty")
         return false;
       }
-
       let newTodo = {value: this.value, completed: false}
       this.todos.unshift(newTodo);
 
-      let docRef = db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
+      db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
       .set({title: this.title, todos: this.todos});
-
 
       this.value = '';
+      this.updateTodos();
     },
     updateTodos: function() {
-      //Push local changes to DB.
-      let docRef = db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
-      .set({title: this.title, todos: this.todos});
+      let docRef = db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title).get()
+      .then(doc => {
+        this.todos = doc.data().todos;
+      });
     },
     selectTodo: function (e, index) {
       e.preventDefault();
       this.todos[index].completed = !this.todos[index].completed;
-      this.updateTodos();
-      return false;
+
+      db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
+      .set({title: this.title, todos: this.todos});
     },
     clearCompleted: function () {
       let clearedList = this.todos.filter(item => {
         return !item.completed
       });
       this.todos = clearedList;
+
+      db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title)
+      .set({title: this.title, todos: clearedList});
       this.updateTodos();
+    },
+    removeTab: function() {
+      db.collection('users').doc(this.userEmail).collection('tabs').doc(this.title).delete();
+      this.$emit('update');
     }
   }
 }
@@ -172,12 +183,40 @@ input[type="text"]:focus {
   text-decoration: line-through;
 }
 .todos-clearCompleted {
+  background: rgba(223, 230, 233, 0);
   cursor: pointer;
-  padding-top: 5px;
+  width: 50%;
+  border-bottom: 1px solid rgba(9, 132, 227, .6);
 }
 .todos-clearCompleted:hover {
-  background: rgba(223, 230, 233, .5);
+  background: rgba(223, 230, 233, .7);
   transition: all .2s;
+
+  background: -moz-linear-gradient(bottom, rgba(9, 132, 227, .6) -50%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom, rgba(9, 132, 227, .6) -50%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top, rgba(9, 132, 227, .3) -50%,rgba(0,0,0,0) 110%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+}
+.tab-removeTab {
+  background: rgba(231, 76, 60, 0);
+  cursor: pointer;
+  width: 50%;
+  border-bottom: 1px solid rgba(231, 76, 60, .6);
+}
+.tab-removeTab:hover {
+  background: rgba(231, 76, 60, .15);
+  transition: all 2s;
+
+  background: -moz-linear-gradient(bottom, rgba(231, 76, 60, .6) -50%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom, rgba(231, 76, 60, .6) -50%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top, rgba(231, 76, 60, .2) -50%,rgba(0,0,0,0) 110%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+}
+.todolist-footer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
 }
 label {
   cursor: pointer;

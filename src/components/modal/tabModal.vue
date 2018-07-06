@@ -28,11 +28,13 @@ export default {
         todos: []
       })
       .then(function() {
-        console.log("Document successfully written!");
+        this.$emit('update');
       })
       .catch(function(error) {
         console.error("Error writing document: ", error);
       });
+
+      this.$emit('update');
     }
   }
 }
