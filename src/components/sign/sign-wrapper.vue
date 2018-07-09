@@ -1,5 +1,5 @@
 <template>
-  <div class="sign">
+  <div class="sign-wrapper">
     <signIntro />
     <signForm />
   </div>
@@ -10,7 +10,7 @@ import signIntro from "./sign-intro"
 import signForm from "./sign-form"
 
 export default {
-  name: 'sign',
+  name: 'sign-wrapper',
   components: {
     signIntro,
     signForm
@@ -18,23 +18,22 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.sign {
+.sign-wrapper {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   width: 830px;
+  height: 100%;
   margin-top: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .sign {
+  .sign-wrapper {
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: center;
-    width: 90%;
-    height: 100%;
     margin-top: 0;
+    width: 100vw;
   }
 }
 </style>

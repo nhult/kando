@@ -20,7 +20,7 @@ export default {
 
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 </style>

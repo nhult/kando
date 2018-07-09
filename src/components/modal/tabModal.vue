@@ -23,6 +23,13 @@ export default {
   },
   methods: {
     addTab: function () {
+      db.collection('users').doc(this.userEmail).collection('tabs').get().then(snap => {
+        if (snap.size > 5) {
+          alert("Limit of tabs is 6, sorry...");
+          return false;
+        }
+      });
+
       db.collection('users').doc(this.userEmail).collection('tabs').doc(this.value).set({
         title: this.value,
         todos: []
@@ -34,6 +41,7 @@ export default {
         console.error("Error writing document: ", error);
       });
 
+      this.value = '';
       this.$emit('update');
     }
   }

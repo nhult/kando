@@ -4,7 +4,7 @@
     <input type='email' v-model='registerEmail' @keyup.enter='signUp' placeholder='Email' />
     <input type='text' v-model='registerUsername' @keyup.enter='signUp' placeholder='Username' />
     <input type='password' v-model='registerPassword' @keyup.enter='signUp' placeholder='Password' />
-    <button @click='signUp(registerUsername)' type='submit' id='sign-register'>Register</button>
+    <button @click='signUp()' type='submit' id='sign-register'>Register</button>
 
     <hr>
 
@@ -32,20 +32,13 @@ export default {
   },
   methods: {
     signUp: function() {
-      const username = this.registerUsername;
-      const email = this.registerEmail;
-
-      firebase.auth().createUserWithEmailAndPassword(email, this.registerPassword).then(
-        db.collection("users").doc(email).set({ username: username }),
-        function (err) {
-          alert('Oops...' + err.message)
-        }
-      );
+      firebase.auth().createUserWithEmailAndPassword(this.registerEmail, this.registerPassword)
+      .catch(function(error) { alert(error.message) });
     },
     signIn: function() {
       firebase.auth().signInWithEmailAndPassword(this.loginEmail, this.loginPassword).then(
         function (user) {
-          alert('Welcome back!')
+          //alert('Welcome back!')
         },
         function (err) {
           alert('Oops...' + err.message)
@@ -56,7 +49,6 @@ export default {
 }
 </script>
 
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
 h1, h2 {
   font-weight: normal;
@@ -70,9 +62,8 @@ h1, h2 {
   -webkit-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.15);
   -moz-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.15);
   box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.15);
-  width: 380px;
-  height: 500px;
-  padding: 10px;
+  width: 390px;
+  height: 510px;
 
   animation: bounce .8s ease-in forwards;
   animation-delay: 5s;
@@ -117,5 +108,15 @@ hr {
   width: 80%;
   opacity: .2;
   margin-top: 30px;
+}
+
+@media only screen and (max-width: 450px) {
+  .sign-form {
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 0;
+    min-width: 95vw;
+  }
 }
 </style>

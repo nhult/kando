@@ -221,10 +221,6 @@ input[type="text"]:focus {
 label {
   cursor: pointer;
 }
-@media only screen and (max-width: 1450px) {
-  .todolist {
-  }
-}
 @media only screen and (max-width: 1000px) {
   .header {
     flex-flow: row nowrap;
@@ -233,7 +229,7 @@ label {
   }
   .todolist {
     max-width: 100%;
-    margin: 0;
+    margin: 2px 0;
     width: 100vw;
     height: 37vmin;
   }

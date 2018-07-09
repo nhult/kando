@@ -17,16 +17,14 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .sign-intro {
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
-  width: 380px;
-  height: 500px;
-  padding: 10px;
+  width: 390px;
+  height: 510px;
 }
 h1 {
   font-weight: normal;
@@ -95,6 +93,13 @@ h1 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .sign-intro {
+    margin-top: 0;
+    min-width: 95vw;
   }
 }
 </style>

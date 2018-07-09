@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import firebase from 'firebase'
 
-import sign from '@/components/sign/sign'
+import sign from '@/components/sign/sign-wrapper'
 import home from '@/components/home/home'
 
 Vue.use(Router)

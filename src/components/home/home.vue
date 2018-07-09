@@ -4,20 +4,15 @@
       <span class="span-date">{{ dayAndTime }}</span>
 
       <div class="new-tab new-tab-header">
-        <tabModal v-show="tabModal" @close="tabModal = false" :userEmail="user" :todayDate="todayDate" @update="updateTabs">+</tabModal>
-        <p class="add-tab" @click="addTab" v-bind:class="{ iconPlusActive: tabModal }">+</p>
-        <span>ADD TAB</span>
+        <tabModalHeader :userEmail="user" :todayDate="todayDate" @update="updateTabs"></tabModalHeader>
       </div>
 
-      <!-- <font-awesome-icon :icon="icon.calendar" size="1x" class="icon icon-calendar" @click="showCalendar" /> -->
       <span class="span-user">{{ user }}</span>
       <button @click='signOut'>
         Sign Out
         <font-awesome-icon :icon="icon.signOut" class="icon-signOut" />
       </button>
     </div>
-
-    <!-- <calendarModal v-show="calendarModal" @close="calendarModal = false" /> -->
 
     <div class="todo-tabs">
       <todolist v-for="(tab, index) in tabs" :key="index" :title="tab.title" @update="updateTabs" />
@@ -33,8 +28,8 @@
 <script>
 import db from '../../main'
 import firebase from 'firebase'
-import calendarModal from "../modal/calendarModal"
 import tabModal from "../modal/tabModal"
+import tabModalHeader from "../modal/tabModalHeader"
 import moment from 'moment'
 import todolist from "../todolist/todolist"
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
@@ -46,7 +41,6 @@ export default {
     return {
       user: this.getUsername(),
       tabs: [],
-      calendarModal: false,
       tabModal: false,
       showTodos: true,
       dayAndTime: moment().format("ddd, hA"),
@@ -58,9 +52,9 @@ export default {
   },
   components: {
     FontAwesomeIcon,
-    calendarModal,
     todolist,
-    tabModal
+    tabModal,
+    tabModalHeader
   },
   computed: {
     icon () {
@@ -210,7 +204,7 @@ export default {
     transform: translateX(-9.3vw);
   }
 }
-@media only screen and (max-width: 680px) {
+@media only screen and (max-width: 850px) {
   .header {
     justify-content: flex-end;
   }
@@ -218,11 +212,15 @@ export default {
     margin: 0;
     transform: translateX(0);
   }
-  .icon-signOut, .span-date, .span-user {
+  .icon-signOut, .span-date {
     display: none;
   }
 }
-
+@media only screen and (max-width: 650px) {
+  .span-user {
+    display: none;
+  }
+}
 /*
 .navbar {
   border: 1px solid grey;
